@@ -24,28 +24,32 @@ void setup() {
   s = new Server(this, 8000);
   opListener = new OpListener();
   
+  lstandImg = loadImage("mage/lstand.png");
+  lchargeImg = loadImage("mage/lcharge.png");
+  lcastImg = loadImage("mage/lcast.png");
+  lblockImg = loadImage("mage/lblock.png");
   rstandImg = loadImage("mage/rstand.png");
   rchargeImg = loadImage("mage/rcharge.png");
   rcastImg = loadImage("mage/rcast.png");
   rblockImg = loadImage("mage/rblock.png");
   for (int i = 0; i < 5; i++) {
     thunderImg[i] = loadImage("orb/thunder" + i + ".png");
-    fireballImg[i] = loadImage("orb/fireball.png");
+    fireballImg[i] = loadImage("orb/fireball" + i + ".png");
     doomImg[i] = loadImage("orb/doom" + i + ".png");
   }
-  s = new Server(this, 8000);  // Start a simple server on a port
+  //s = new Server(this, 8000);  // Start a simple server on a port
   
   me = new Mage(1200, 400, 5, listener, orbs, rstandImg, rchargeImg, rcastImg, rblockImg);
-  oppo = new Mage(400, 400, 5, opListener, orbs, lstandImg, lstandImg, lcastImg, lblockImg);
+  oppo = new Mage(400, 400, 5, opListener, orbs, lstandImg, lchargeImg, lcastImg, lblockImg);
 } 
 
 void draw() {
   background(100);
   leapDraw();
-  if (c.available() > 0) {
-     input = c.readString();
-     opListener.parseJSON(input);
-  }
+  //if (c.available() > 0) {
+  //   input = c.readString();
+  //   opListener.parseJSON(input);
+  //}
   me.process();
   me.display();
   oppo.process();

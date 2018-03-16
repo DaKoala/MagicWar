@@ -10,6 +10,7 @@ class Mage {
   int lstate, rstate, pr;
   int energy;
   int state;
+  int orien;
   Listener listener;
   ArrayList<Orb> shots;
   PImage stand, charge, cast, block;
@@ -28,11 +29,13 @@ class Mage {
     this.cast = _cast;
     this.block = _block;
     this.shots = _shots;
+    this.orien = _posX < 800 ? 1 : -1;
   }
 
   void process() {
     int left = this.listener.getLeft();
     int right = this.listener.getRight();
+    float hei = this.listener.getHeight();
     
     this.state = CAST;
     if (right == 0) {
@@ -42,7 +45,7 @@ class Mage {
       if (this.pr != 1) this.energy = 0;
       else              this.energy++;
       if (this.energy == 20) {
-        this.shots.add(new Fireball(this.pos.x, this.pos.y, 5, 0, fireballImg));
+        this.shots.add(new Fireball(this.pos.x, this.pos.y, 5 * this.orien, 0, fireballImg));
         this.mana -= 100;
       }
       this.pr = right;
@@ -52,7 +55,7 @@ class Mage {
       if (this.pr != 2) this.energy = 0;
       else              this.energy++;
       if (this.energy == 30) {
-        this.shots.add(new Fireball(this.pos.x, this.pos.y, 8, 0, thunderImg));
+        this.shots.add(new Fireball(this.pos.x, this.pos.y, 8 * this.orien, 0, thunderImg));
         this.mana -= 300;
       }
       this.pr = right;
@@ -62,7 +65,7 @@ class Mage {
       if (this.pr != 3) this.energy = 0;
       else              this.energy++;
       if (this.energy == 50) {
-        this.shots.add(new Fireball(this.pos.x, this.pos.y, 10, 0, doomImg));
+        this.shots.add(new Fireball(this.pos.x, this.pos.y, 10 * this.orien, 0, doomImg));
         this.mana -= 500;
       }
       this.pr = right;
@@ -72,8 +75,8 @@ class Mage {
 
     if (left == 0) {
       this.state = STAND;
-      if (this.pos.y < listener.leftHeight - 10) this.pos.y += 5;
-      else if (this.pos.y > listener.leftHeight + 10) this.pos.y -= 5;
+      if (this.pos.y < hei - 10) this.pos.y += this.vel;
+      else if (this.pos.y > hei + 10) this.pos.y -= this.vel;
     }
     else if (left == 1) {
       this.state = CHARGE;

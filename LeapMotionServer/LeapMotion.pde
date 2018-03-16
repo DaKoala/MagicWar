@@ -26,6 +26,10 @@ class Listener {
     this.leftFound = false;
     this.rightFound = false;
   }
+  
+  float getHeight() {
+    return this.leftHeight;
+  }
 
   int getLeft() {
     if (!this.leftFound) return 0; // Default
