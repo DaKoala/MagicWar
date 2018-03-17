@@ -6,29 +6,39 @@ class Mage {
   
   PVector pos;
   float vel;
-  int mana;
   int lstate, rstate, pr;
-  int energy;
+  int health, mana, superPower, energy;
   int state;
   int orien;
+  int size;
+  float vul;
   Listener listener;
   ArrayList<Orb> shots;
   PImage stand, charge, cast, block;
 
-  Mage (float _posX, float _posY, float _vel, Listener _listener, ArrayList<Orb> _shots, PImage _stand, PImage _charge, PImage _cast, 
+  Mage (float _posX, float _posY, float _vel, int _size, Listener _listener, ArrayList<Orb> _shots, PImage _stand, PImage _charge, PImage _cast, 
     PImage _block) {
     this.pos = new PVector(_posX, _posY);
     this.vel = _vel;
-    this.mana = 0;
+    this.size = _size;
+    
     this.lstate = 0;
     this.rstate = 0;
+    
+    this.health = 100;
+    this.mana = 0;
     this.energy = 0;
+    this.superPower = 0;
+    this.vul = 1;
+    
     this.listener = _listener;
+    
     this.stand = _stand;
     this.charge = _charge;
     this.cast = _cast;
     this.block = _block;
     this.shots = _shots;
+    
     this.orien = _posX < 800 ? 1 : -1;
   }
 
@@ -41,32 +51,32 @@ class Mage {
     if (right == 0) {
       this.energy = 0;
     } 
-    else if (right == 1 && this.mana >= 100) {
+    else if (right == 1 && this.mana >= 1) {
       if (this.pr != 1) this.energy = 0;
       else              this.energy++;
       if (this.energy == 20) {
-        this.shots.add(new Fireball(this.pos.x, this.pos.y, 5 * this.orien, 0, fireballImg));
-        this.mana -= 100;
+        this.shots.add(new Orb(this.pos.x, this.pos.y, 5 * this.orien, 0, 50, 10, 0, fireballImg));
+        this.mana -= 1;
       }
       this.pr = right;
       return;
     } 
-    else if (right == 2 && this.mana >= 300) {
+    else if (right == 2 && this.mana >= 1) {
       if (this.pr != 2) this.energy = 0;
       else              this.energy++;
       if (this.energy == 30) {
-        this.shots.add(new Fireball(this.pos.x, this.pos.y, 8 * this.orien, 0, thunderImg));
-        this.mana -= 300;
+        this.shots.add(new Orb(this.pos.x, this.pos.y, 8 * this.orien, 0, 75, 10, 1, thunderImg));
+        this.mana -= 1;
       }
       this.pr = right;
       return;
     } 
-    else if (right == 3 && this.mana >= 500) {
+    else if (right == 3 && this.mana >= 1) {
       if (this.pr != 3) this.energy = 0;
       else              this.energy++;
       if (this.energy == 50) {
-        this.shots.add(new Fireball(this.pos.x, this.pos.y, 10 * this.orien, 0, doomImg));
-        this.mana -= 500;
+        this.shots.add(new Orb(this.pos.x, this.pos.y, 10 * this.orien, 0, 125, 10, 2, doomImg));
+        this.mana -= 1;
       }
       this.pr = right;
       return;
