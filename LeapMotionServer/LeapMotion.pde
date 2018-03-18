@@ -104,6 +104,8 @@ void leapDraw() {
     boolean handIsLeft         = hand.isLeft();
     boolean handIsRight        = hand.isRight();
     float   handHeight         = hand.getStabilizedPosition().y;
+    handHeight = constrain(handHeight, 301, 799);
+    handHeight = map(handHeight, 300, 800, 100, 800);
     float   handGrab           = hand.getGrabStrength();
     float   handPinch          = hand.getPinchStrength();
     int     fingerState        = 0;
