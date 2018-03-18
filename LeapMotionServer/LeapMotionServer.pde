@@ -5,7 +5,6 @@ Server s;
 OpListener opListener;
 String input;
 int data[];
-JSONObject json = new JSONObject();
 int energy = 0;
 Mage me, oppo;
 PImage[] fireballImg = new PImage[5];
@@ -21,7 +20,6 @@ void setup() {
   size(1600, 900); 
   imageMode(CENTER);
   rectMode(CORNER);
-  background(255);
   frameRate(45);
   s = new Server(this, 8000);
   opListener = new OpListener();
@@ -45,6 +43,8 @@ void setup() {
 } 
 
 void draw() {
+  JSONObject toClient = new JSONObject();
+  JSONArray mages = new JSONArray();
   background(100);
   leapDraw();
   c = s.available();
@@ -100,4 +100,21 @@ void draw() {
   }
   me.information();
   oppo.information();
+  
+  mageJSON(mages, 0, me);
+  mageJSON(mages, 1, oppo);
+  toClient.setJSONArray("mages", mages);
+  s.write(toClient.toString());
+}
+
+void mageJSON(JSONArray jarray, int index, Mage mage) {
+  JSONObject jmage = new JSONObject();
+  
+  jmage.setFloat("height", mage.pos.y);
+  jmage.setInt("state", mage.state);
+  jmage.setInt("health", mage.health);
+  jmage.setInt("mana", mage.mana);
+  jmage.setInt("superPower", mage.superPower);
+  
+  jarray.setJSONObject(index, jmage);
 }
