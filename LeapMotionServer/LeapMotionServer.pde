@@ -23,7 +23,7 @@ void setup() {
   rectMode(CORNER);
   background(255);
   frameRate(45);
-  //s = new Server(this, 8000);
+  s = new Server(this, 8000);
   opListener = new OpListener();
   
   lstandImg = loadImage("mage/lstand.png");
@@ -47,10 +47,10 @@ void setup() {
 void draw() {
   background(100);
   leapDraw();
-  //if (c.available() > 0) {
-  //   input = c.readString();
-  //   opListener.parseJSON(input);
-  //}
+  if (c.available() > 0) {
+     input = c.readString();
+     opListener.parseJSON(input);
+  }
   me.process();
   me.display();
   oppo.process();
