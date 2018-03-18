@@ -36,6 +36,7 @@ void setup() {
 } 
 
 void draw() {
+  background(100);
   leapDraw();
   output.setInt("left", listener.getLeft());
   output.setInt("right", listener.getRight());
@@ -48,9 +49,17 @@ void draw() {
   JSONObject fromServer = parseJSON(input);
   if (!fromServer.equals(new JSONObject())) {
     JSONArray mages = fromServer.getJSONArray("mages");
+    try {
     setMage(mages.getJSONObject(0), me);
     setMage(mages.getJSONObject(1), oppo);
+    } catch(Exception e) {
+      println("Fail"); 
+    }
   }
+  me.display();
+  oppo.display();
+  me.information();
+  oppo.information();
 }
 
 JSONObject parseJSON(String jString) {
