@@ -71,6 +71,10 @@ class OpListener extends Listener {
   int getRight() {
     return this.right;
   }
+  
+  float getHeight() {
+    return this.leftHeight;
+  }
 
   void parseJSON(String Jstr) {
     boolean success = true;
@@ -79,7 +83,7 @@ class OpListener extends Listener {
       Jobj = parseJSONObject(Jstr);
       this.left = Jobj.getInt("left");
       this.right = Jobj.getInt("right");
-      this.leftHeight = Jobj.getInt("leftHeight");
+      this.leftHeight = Jobj.getFloat("leftHeight");
     } 
     catch(Exception e) {
       success = false;

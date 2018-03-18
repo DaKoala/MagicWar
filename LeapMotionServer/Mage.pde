@@ -46,6 +46,7 @@ class Mage {
     int left = this.listener.getLeft();
     int right = this.listener.getRight();
     float hei = this.listener.getHeight();
+    println(this.listener.leftHeight);
     
     this.superPower++;
     this.superPower = constrain(this.superPower, 0, 1500);

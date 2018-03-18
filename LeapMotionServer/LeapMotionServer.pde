@@ -47,7 +47,8 @@ void setup() {
 void draw() {
   background(100);
   leapDraw();
-  if (c.available() > 0) {
+  c = s.available();
+  if (c != null) {
      input = c.readString();
      opListener.parseJSON(input);
   }
@@ -87,7 +88,7 @@ void draw() {
     mine.display();
   }
   for (int j = oppoOrbs.size() - 1; j > -1; j--) {
-    Orb its = myOrbs.get(j);
+    Orb its = oppoOrbs.get(j);
     if (its.collideMage(me)) {
       its.hit(me);
       oppoOrbs.remove(j);
