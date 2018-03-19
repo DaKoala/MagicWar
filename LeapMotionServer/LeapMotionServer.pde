@@ -7,14 +7,13 @@ String input;
 int stage = 0;
 int myState = 1;
 int oppoState = 0;
-int data[];
-int energy = 0;
+boolean win = false;
 Mage me, oppo;
 PImage backgroundImg;
 PImage[] fireballImg = new PImage[5];
 PImage[] thunderImg = new PImage[5];
 PImage[] doomImg = new PImage[5];
-PImage onlineImg, offlineImg, waitingImg;
+PImage onlineImg, offlineImg, waitingImg, winImg, loseImg;
 PImage rstandImg, rchargeImg, rcastImg, rblockImg, rmovImg, lstandImg, lchargeImg, lcastImg, lblockImg, lmovImg;
 ArrayList<Orb> myOrbs = new ArrayList<Orb>();
 ArrayList<Orb> oppoOrbs = new ArrayList<Orb>();
@@ -28,6 +27,8 @@ void setup() {
   frameRate(45);
   s = new Server(this, 8000);
   opListener = new OpListener();
+  winImg = loadImage("sign/win.png");
+  loseImg = loadImage("sign/lose.png");
   onlineImg = loadImage("sign/online.png");
   waitingImg = loadImage("sign/waiting.png");
   offlineImg = loadImage("sign/offline.png");
@@ -47,7 +48,7 @@ void setup() {
     fireballImg[i] = loadImage("orb/fireball" + i + ".png");
     doomImg[i] = loadImage("orb/doom" + i + ".png");
   }
-  
+
   me = new Mage(1400, 400, 5, 100, listener, myOrbs, rstandImg, rchargeImg, rcastImg, rblockImg, rmovImg);
   oppo = new Mage(200, 400, 5, 100, opListener, oppoOrbs, lstandImg, lchargeImg, lcastImg, lblockImg, lmovImg);
 } 
@@ -65,38 +66,74 @@ void draw() {
     }
     if (listener.leftGrab > 0.8 && listener.rightGrab > 0.8) {
       s.write("1");
-      myState = 2; 
-    } 
-    else {
-      s.write("0"); 
+      myState = 2;
+    } else {
+      s.write("0");
     }
-    
+
     if (myState == 2 && oppoState == 2) stage = 1;
-    
+
     if (myState == 1) image(waitingImg, 200, 450);
     else              image(onlineImg, 200, 450);
-    
+
     if      (oppoState == 0) image(offlineImg, 1400, 450);
     else if (oppoState == 1) image(waitingImg, 1400, 450);
     else                     image(onlineImg, 1400, 450);
-    
+
     return;
   }
-  
+
+  if (stage == 2) {
+    /* Online detection */
+    background(0);
+    
+    if (win) image(winImg, 800, 200);
+    else     image(loseImg, 800, 200);
+    
+    leapDraw();
+    c = s.available();
+    if (c != null) {
+      int inputNum = parseInt(c.readString());
+      if (oppoState != 2) oppoState = 1;
+      if (inputNum == 1) oppoState = 2;
+    }
+    if (listener.leftGrab > 0.8 && listener.rightGrab > 0.8) {
+      s.write("1");
+      myState = 2;
+    } else {
+      s.write("0");
+    }
+
+    if (myState == 2 && oppoState == 2) {
+      init();
+      stage = 1;
+    }
+
+    if (myState == 1) image(waitingImg, 200, 450);
+    else              image(onlineImg, 200, 450);
+
+    if      (oppoState == 0) image(offlineImg, 1400, 450);
+    else if (oppoState == 1) image(waitingImg, 1400, 450);
+    else                     image(onlineImg, 1400, 450);
+
+    return;
+  }
+
   JSONObject toClient = new JSONObject();
   JSONArray mages = new JSONArray();
   image(backgroundImg, 800, 450);
   leapDraw();
   c = s.available();
   if (c != null) {
-     input = c.readString();
-     opListener.parseJSON(input);
+    input = c.readString();
+    opListener.parseJSON(input);
   }
+
   me.process();
   me.display();
   oppo.process();
   oppo.display();
-  
+
   /* Handle collide */
   for (int i = myOrbs.size() - 1; i > -1; i--) {
     Orb mine = myOrbs.get(i);
@@ -114,7 +151,7 @@ void draw() {
       }
     }
   }
-  
+
   /* Handle damage and display orbs */
   for (int i = myOrbs.size() - 1; i > -1; i--) {
     Orb mine = myOrbs.get(i);
@@ -146,9 +183,19 @@ void draw() {
     its.move();
     its.display();
   }
+
+  if (me.health <= 0 || oppo.health <= 0) {
+    if (me.health <= 0) win = false;
+    else                win = true;
+    stage = 2;
+    myState = 1;
+    oppoState = 1;
+    return;
+  }
+
   me.information();
   oppo.information();
-  
+
   mageJSON(mages, 0, me);
   mageJSON(mages, 1, oppo);
   toClient.setJSONArray("mages", mages);
@@ -157,13 +204,13 @@ void draw() {
 
 void mageJSON(JSONArray jarray, int index, Mage mage) {
   JSONObject jmage = new JSONObject();
-  
+
   jmage.setFloat("height", mage.pos.y);
   jmage.setInt("state", mage.state);
   jmage.setInt("health", mage.health);
   jmage.setInt("mana", mage.mana);
   jmage.setInt("superPower", mage.superPower);
-  
+
   jarray.setJSONObject(index, jmage);
 }
 

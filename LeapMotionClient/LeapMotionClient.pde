@@ -7,11 +7,12 @@ Mage me, oppo;
 int stage = 0;
 int myState = 1;
 int oppoState = 1;
+boolean win = false;
 PImage backgroundImg;
 PImage[] fireballImg = new PImage[5];
 PImage[] thunderImg = new PImage[5];
 PImage[] doomImg = new PImage[5];
-PImage onlineImg, offlineImg, waitingImg;
+PImage onlineImg, offlineImg, waitingImg, winImg, loseImg;
 PImage rstandImg, rchargeImg, rcastImg, rblockImg, rmovImg, lstandImg, lchargeImg, lcastImg, lblockImg, lmovImg;
 ArrayList<Orb> myOrbs = new ArrayList<Orb>();
 ArrayList<Orb> oppoOrbs = new ArrayList<Orb>();
@@ -22,6 +23,8 @@ void setup() {
   imageMode(CENTER);
   rectMode(CORNER);
   frameRate(45); // Slow it down a little
+  winImg = loadImage("sign/win.png");
+  loseImg = loadImage("sign/lose.png");
   onlineImg = loadImage("sign/online.png");
   waitingImg = loadImage("sign/waiting.png");
   offlineImg = loadImage("sign/offline.png");
@@ -82,6 +85,47 @@ void draw() {
     return;
   }
   
+  if (stage == 2) {
+    background(0);
+    
+    if (win) image(winImg, 800, 200);
+    else     image(loseImg, 800, 200);
+    
+    leapDraw();
+    if (c.available() > 0) {
+      int inputNum = parseInt(c.readString());
+      if (myState != 2) myState = 1;
+      if (inputNum == 1) myState = 2;
+    }
+    if (listener.leftGrab > 0.8 && listener.rightGrab > 0.8) {
+      oppoState = 2; 
+    }
+    
+    if (oppoState == 2) {
+      c.write("1");
+    }
+    else {
+      c.write("0"); 
+    }
+
+    
+    if (myState == 2 && oppoState == 2) {
+      init();
+      stage = 1;
+    }
+    
+    if (myState == 1) image(waitingImg, 200, 450);
+    else              image(onlineImg, 200, 450);
+    
+    if      (oppoState == 0) image(offlineImg, 1400, 450);
+    else if (oppoState == 1) image(waitingImg, 1400, 450);
+    else                     image(onlineImg, 1400, 450);
+    
+    return; 
+  }
+  
+  
+  
   image(backgroundImg, 800, 450);
   leapDraw();
   output.setInt("left", listener.getLeft());
@@ -102,6 +146,15 @@ void draw() {
     catch(Exception e) {
       println("Fail");
     }
+  }
+  
+  if (me.health <= 0 || oppo.health <= 0) {
+    if (me.health <= 0) win = true;
+    else                win = false;
+    stage = 2;
+    myState = 1;
+    oppoState = 1;
+    return;
   }
 
   /* Handle collide */
@@ -156,6 +209,7 @@ void draw() {
   oppo.display();
   me.information();
   oppo.information();
+  
 }
 
 JSONObject parseJSON(String jString) {
@@ -192,9 +246,9 @@ void setMage(JSONObject j, Mage m, ArrayList<Orb> orbs) {
   m.superPower = newSuperPower;
 }
 
-void showOrbs(ArrayList<Orb> orbs) {
-  for (Orb o : orbs) {
-    o.move();
-    o.display();
-  }
+void init() {
+  me = new Mage(1400, 400, 100, rstandImg, rchargeImg, rcastImg, rblockImg, rmovImg);
+  oppo = new Mage(200, 400, 100, lstandImg, lchargeImg, lcastImg, lblockImg, lmovImg);
+  myOrbs = new ArrayList<Orb>();
+  oppoOrbs = new ArrayList<Orb>();
 }
