@@ -4,10 +4,15 @@ Client c;
 String input;
 JSONObject output = new JSONObject();
 Mage me, oppo;
+int stage = 0;
+int myState = 1;
+int oppoState = 1;
+PImage backgroundImg;
 PImage[] fireballImg = new PImage[5];
 PImage[] thunderImg = new PImage[5];
 PImage[] doomImg = new PImage[5];
-PImage rstandImg, rchargeImg, rcastImg, rblockImg, lstandImg, lchargeImg, lcastImg, lblockImg;
+PImage onlineImg, offlineImg, waitingImg;
+PImage rstandImg, rchargeImg, rcastImg, rblockImg, rmovImg, lstandImg, lchargeImg, lcastImg, lblockImg, lmovImg;
 ArrayList<Orb> myOrbs = new ArrayList<Orb>();
 ArrayList<Orb> oppoOrbs = new ArrayList<Orb>();
 
@@ -17,28 +22,63 @@ void setup() {
   imageMode(CENTER);
   rectMode(CORNER);
   frameRate(45); // Slow it down a little
+  onlineImg = loadImage("sign/online.png");
+  waitingImg = loadImage("sign/waiting.png");
+  offlineImg = loadImage("sign/offline.png");
+  backgroundImg = loadImage("background.png");
   lstandImg = loadImage("mage/lstand.png");
   lchargeImg = loadImage("mage/lcharge.png");
   lcastImg = loadImage("mage/lcast.png");
   lblockImg = loadImage("mage/lblock.png");
+  lmovImg = loadImage("mage/lmove.png");
   rstandImg = loadImage("mage/rstand.png");
   rchargeImg = loadImage("mage/rcharge.png");
   rcastImg = loadImage("mage/rcast.png");
   rblockImg = loadImage("mage/rblock.png");
+  rmovImg = loadImage("mage/rmove.png");
   for (int i = 0; i < 5; i++) {
     thunderImg[i] = loadImage("orb/thunder" + i + ".png");
     fireballImg[i] = loadImage("orb/fireball" + i + ".png");
     doomImg[i] = loadImage("orb/doom" + i + ".png");
   }
   leapSetup();
-  me = new Mage(1400, 400, 100, rstandImg, rchargeImg, rcastImg, rblockImg);
-  oppo = new Mage(200, 400, 100, lstandImg, lchargeImg, lcastImg, lblockImg);
+  me = new Mage(1400, 400, 100, rstandImg, rchargeImg, rcastImg, rblockImg, rmovImg);
+  oppo = new Mage(200, 400, 100, lstandImg, lchargeImg, lcastImg, lblockImg, lmovImg);
   // Connect to the server’s IP address and port­
   c = new Client(this, "169.254.10.41", 8000); // Replace with your server’s IP and port
 } 
 
 void draw() {
-  background(100);
+  if (stage == 0) {
+    /* Online detection */
+    background(0);
+    leapDraw();
+    if (c.available() > 0) {
+      input = c.readString();
+      if (myState != 2) myState = 1;
+      if (input == "1") myState = 2;
+    }
+    if (listener.leftGrab > 0.8 && listener.rightGrab > 0.8) {
+      c.write("1");
+      oppoState = 2; 
+    }
+    else {
+      c.write("0");
+    }
+    
+    if (myState == 2 && oppoState == 2) stage = 1;
+    
+    if (myState == 1) image(waitingImg, 200, 450);
+    else              image(onlineImg, 200, 450);
+    
+    if      (oppoState == 0) image(offlineImg, 1400, 450);
+    else if (oppoState == 1) image(waitingImg, 1400, 450);
+    else                     image(onlineImg, 1400, 450);
+    
+    return;
+  }
+  
+  image(backgroundImg, 800, 450);
   leapDraw();
   output.setInt("left", listener.getLeft());
   output.setInt("right", listener.getRight());
@@ -86,6 +126,10 @@ void draw() {
       continue;
       // TODO: Play sound
     }
+    if (mine.expire()) {
+      myOrbs.remove(i);
+      continue;
+    }
     mine.move();
     mine.display();
   }
@@ -95,6 +139,10 @@ void draw() {
       oppoOrbs.remove(j);
       continue;
       // TODO: Play sound
+    }
+    if (its.expire()) {
+      oppoOrbs.remove(j);
+      continue;
     }
     its.move();
     its.display();

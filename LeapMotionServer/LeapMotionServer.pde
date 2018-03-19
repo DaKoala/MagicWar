@@ -4,13 +4,18 @@ Client c;
 Server s;
 OpListener opListener;
 String input;
+int stage = 0;
+int myState = 1;
+int oppoState = 0;
 int data[];
 int energy = 0;
 Mage me, oppo;
+PImage backgroundImg;
 PImage[] fireballImg = new PImage[5];
 PImage[] thunderImg = new PImage[5];
 PImage[] doomImg = new PImage[5];
-PImage rstandImg, rchargeImg, rcastImg, rblockImg, lstandImg, lchargeImg, lcastImg, lblockImg;
+PImage onlineImg, offlineImg, waitingImg;
+PImage rstandImg, rchargeImg, rcastImg, rblockImg, rmovImg, lstandImg, lchargeImg, lcastImg, lblockImg, lmovImg;
 ArrayList<Orb> myOrbs = new ArrayList<Orb>();
 ArrayList<Orb> oppoOrbs = new ArrayList<Orb>();
 
@@ -23,29 +28,64 @@ void setup() {
   frameRate(45);
   s = new Server(this, 8000);
   opListener = new OpListener();
-  
+  onlineImg = loadImage("sign/online.png");
+  waitingImg = loadImage("sign/waiting.png");
+  offlineImg = loadImage("sign/offline.png");
+  backgroundImg = loadImage("background.png");
   lstandImg = loadImage("mage/lstand.png");
   lchargeImg = loadImage("mage/lcharge.png");
   lcastImg = loadImage("mage/lcast.png");
   lblockImg = loadImage("mage/lblock.png");
+  lmovImg = loadImage("mage/lmove.png");
   rstandImg = loadImage("mage/rstand.png");
   rchargeImg = loadImage("mage/rcharge.png");
   rcastImg = loadImage("mage/rcast.png");
   rblockImg = loadImage("mage/rblock.png");
+  rmovImg = loadImage("mage/rmove.png");
   for (int i = 0; i < 5; i++) {
     thunderImg[i] = loadImage("orb/thunder" + i + ".png");
     fireballImg[i] = loadImage("orb/fireball" + i + ".png");
     doomImg[i] = loadImage("orb/doom" + i + ".png");
   }
   
-  me = new Mage(1400, 400, 5, 100, listener, myOrbs, rstandImg, rchargeImg, rcastImg, rblockImg);
-  oppo = new Mage(200, 400, 5, 100, opListener, oppoOrbs, lstandImg, lchargeImg, lcastImg, lblockImg);
+  me = new Mage(1400, 400, 5, 100, listener, myOrbs, rstandImg, rchargeImg, rcastImg, rblockImg, rmovImg);
+  oppo = new Mage(200, 400, 5, 100, opListener, oppoOrbs, lstandImg, lchargeImg, lcastImg, lblockImg, lmovImg);
 } 
 
 void draw() {
+  if (stage == 0) {
+    /* Online detection */
+    background(0);
+    leapDraw();
+    c = s.available();
+    if (c != null) {
+      input = c.readString();
+      if (oppoState != 2) oppoState = 1;
+      if (input == "1") oppoState = 2;
+    }
+    if (listener.leftGrab > 0.8 && listener.rightGrab > 0.8) {
+      s.write("1");
+      myState = 2; 
+    } 
+    else {
+      s.write("0"); 
+    }
+    
+    if (myState == 2 && oppoState == 2) stage = 1;
+    
+    if (myState == 1) image(waitingImg, 200, 450);
+    else              image(onlineImg, 200, 450);
+    
+    if      (oppoState == 0) image(offlineImg, 1400, 450);
+    else if (oppoState == 1) image(waitingImg, 1400, 450);
+    else                     image(onlineImg, 1400, 450);
+    
+    return;
+  }
+  
   JSONObject toClient = new JSONObject();
   JSONArray mages = new JSONArray();
-  background(100);
+  image(backgroundImg, 800, 450);
   leapDraw();
   c = s.available();
   if (c != null) {
@@ -84,6 +124,10 @@ void draw() {
       continue;
       // TODO: Play sound
     }
+    if (mine.expire()) {
+      myOrbs.remove(i); 
+      continue;
+    }
     mine.move();
     mine.display();
   }
@@ -94,6 +138,10 @@ void draw() {
       oppoOrbs.remove(j);
       continue;
       // TODO: Play sound
+    }
+    if (its.expire()) {
+      oppoOrbs.remove(j);
+      continue;
     }
     its.move();
     its.display();
@@ -117,4 +165,11 @@ void mageJSON(JSONArray jarray, int index, Mage mage) {
   jmage.setInt("superPower", mage.superPower);
   
   jarray.setJSONObject(index, jmage);
+}
+
+void init() {
+  me = new Mage(1400, 400, 5, 100, listener, myOrbs, rstandImg, rchargeImg, rcastImg, rblockImg, rmovImg);
+  oppo = new Mage(200, 400, 5, 100, opListener, oppoOrbs, lstandImg, lchargeImg, lcastImg, lblockImg, lmovImg);
+  myOrbs = new ArrayList<Orb>();
+  oppoOrbs = new ArrayList<Orb>();
 }

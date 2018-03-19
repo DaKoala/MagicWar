@@ -3,6 +3,7 @@ class Mage {
   final static int CAST   = 1;
   final static int BLOCK  = 2;
   final static int CHARGE = 3;
+  final static int MOV    = 4;
   
   PVector pos;
   float vel;
@@ -16,10 +17,10 @@ class Mage {
   float stableHeight;
   Listener listener;
   ArrayList<Orb> shots;
-  PImage stand, charge, cast, block;
+  PImage stand, charge, cast, block, mov;
 
   Mage (float _posX, float _posY, float _vel, int _size, Listener _listener, ArrayList<Orb> _shots, PImage _stand, PImage _charge, PImage _cast, 
-    PImage _block) {
+    PImage _block, PImage _mov) {
     this.pos = new PVector(_posX, _posY);
     this.vel = _vel;
     this.size = _size;
@@ -36,6 +37,7 @@ class Mage {
     this.charge = _charge;
     this.cast = _cast;
     this.block = _block;
+    this.mov = _mov;
     this.shots = _shots;
     
     this.orien = _posX < 800 ? 1 : -1;
@@ -93,10 +95,12 @@ class Mage {
       if (!this.stable && this.pos.y < hei - 10) {
         this.vel = this.vel >= 5 ? this.vel : this.vel + 0.2;
         this.pos.y += this.vel;
+        this.state = MOV;
       }
       else if (!this.stable && this.pos.y > hei + 10) {
         this.vel = this.vel <= -5 ? this.vel : this.vel - 0.2;
         this.pos.y += this.vel;
+        this.state = MOV;
       }
       else {
         this.vel = 0;
@@ -119,6 +123,7 @@ class Mage {
     if      (this.state == CAST)   image(this.cast, this.pos.x, this.pos.y);
     else if (this.state == BLOCK)  image(this.block, this.pos.x, this.pos.y);
     else if (this.state == CHARGE) image(this.charge, this.pos.x, this.pos.y);
+    else if (this.state == MOV)    image(this.mov, this.pos.x, this.pos.y);
     else                           image(this.stand, this.pos.x, this.pos.y);
   }
   

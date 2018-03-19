@@ -3,6 +3,7 @@ class Mage {
   final static int CAST   = 1;
   final static int BLOCK  = 2;
   final static int CHARGE = 3;
+  final static int MOV    = 4;
   
   PVector pos;
   float vel;
@@ -11,9 +12,9 @@ class Mage {
   int state;
   int size;
   int orien;
-  PImage stand, charge, cast, block;
+  PImage stand, charge, cast, block, mov;
 
-  Mage (float _posX, float _posY, int _size, PImage _stand, PImage _charge, PImage _cast, PImage _block) {
+  Mage (float _posX, float _posY, int _size, PImage _stand, PImage _charge, PImage _cast, PImage _block, PImage _mov) {
     this.pos = new PVector(_posX, _posY);
     this.size = _size;
     this.health = 200;
@@ -23,6 +24,7 @@ class Mage {
     this.charge = _charge;
     this.cast = _cast;
     this.block = _block;
+    this.mov = _mov;
     this.state = 0;
     this.orien = _posX < 800 ? 1 : -1;
   }
@@ -31,6 +33,7 @@ class Mage {
     if      (this.state == CAST)   image(this.cast, this.pos.x, this.pos.y);
     else if (this.state == BLOCK)  image(this.block, this.pos.x, this.pos.y);
     else if (this.state == CHARGE) image(this.charge, this.pos.x, this.pos.y);
+    else if (this.state == MOV)    image(this.mov, this.pos.x, this.pos.y);
     else                           image(this.stand, this.pos.x, this.pos.y);
   }
   

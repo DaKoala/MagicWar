@@ -59,4 +59,8 @@ class Orb {
     else if (this.prior < that.prior) return -1;
     return 0;
   }
+  
+  boolean expire() {
+    return (this.pos.x > 1750 || this.pos.x < -150);
+  }
 }
