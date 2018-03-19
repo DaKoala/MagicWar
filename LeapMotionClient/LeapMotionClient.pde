@@ -50,8 +50,8 @@ void draw() {
   if (!fromServer.equals(new JSONObject())) {
     JSONArray mages = fromServer.getJSONArray("mages");
     try {
-    setMage(mages.getJSONObject(0), me);
-    setMage(mages.getJSONObject(1), oppo);
+    setMage(mages.getJSONObject(0), me, myOrbs);
+    setMage(mages.getJSONObject(1), oppo, oppoOrbs);
     } catch(Exception e) {
       println("Fail"); 
     }
@@ -73,10 +73,26 @@ JSONObject parseJSON(String jString) {
   return result;
 }
 
-void setMage(JSONObject j, Mage m) {
+void setMage(JSONObject j, Mage m, ArrayList<Orb> orbs) {
   m.pos.y = j.getFloat("height");
   m.state = j.getInt("state");
   m.health = j.getInt("health");
-  m.mana = j.getInt("mana");
-  m.superPower = j.getInt("superPower");
+  int newMana = j.getInt("mana");
+  if (newMana >= m.mana) {
+    ; 
+  }
+  else if (m.mana - newMana >= 99) {
+    orbs.add(new Orb(m.pos.x, m.pos.y, 8 * m.orien, 0, doomImg));
+  }
+  else {
+    orbs.add(new Orb(m.pos.x, m.pos.y, 5 * m.orien, 0, thunderImg)); 
+  }
+  m.mana = newMana;
+  int newSuperPower = j.getInt("superPower");
+  if (newSuperPower >= m.superPower) {
+    ; 
+  }
+  else {
+    orbs.add(new Orb(m.pos.x, m.pos.y, 10 * m.orien, 0, doomImg)); 
+  }
 }

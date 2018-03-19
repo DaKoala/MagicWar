@@ -6,12 +6,14 @@ class Mage {
   
   PVector pos;
   float vel;
-  int lstate, rstate, pr;
+  int pr;
   int health, mana, superPower, energy;
   int state;
   int orien;
   int size;
   float vul;
+  boolean stable;
+  float stableHeight;
   Listener listener;
   ArrayList<Orb> shots;
   PImage stand, charge, cast, block;
@@ -21,9 +23,6 @@ class Mage {
     this.pos = new PVector(_posX, _posY);
     this.vel = _vel;
     this.size = _size;
-    
-    this.lstate = 0;
-    this.rstate = 0;
     
     this.health = 200;
     this.mana = 0; // most 500
@@ -46,7 +45,6 @@ class Mage {
     int left = this.listener.getLeft();
     int right = this.listener.getRight();
     float hei = this.listener.getHeight();
-    println(this.listener.leftHeight);
     
     this.superPower++;
     this.superPower = constrain(this.superPower, 0, 1500);
@@ -92,16 +90,20 @@ class Mage {
 
     if (left == 0) {
       this.state = STAND;
-      if (this.pos.y < hei - 10) {
+      if (!this.stable && this.pos.y < hei - 10) {
         this.vel = this.vel >= 5 ? this.vel : this.vel + 0.2;
         this.pos.y += this.vel;
       }
-      else if (this.pos.y > hei + 10) {
+      else if (!this.stable && this.pos.y > hei + 10) {
         this.vel = this.vel <= -5 ? this.vel : this.vel - 0.2;
         this.pos.y += this.vel;
       }
       else {
         this.vel = 0;
+        if (!this.stable) this.stableHeight = this.pos.y;
+        this.pos.y = this.stableHeight + 10 * sin(frameCount / 10.0);
+        if (abs(hei - this.stableHeight) < 10) this.stable = true;
+        else                                   this.stable = false;
       }
     }
     else if (left == 1) {
