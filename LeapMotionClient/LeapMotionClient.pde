@@ -54,17 +54,21 @@ void draw() {
     background(0);
     leapDraw();
     if (c.available() > 0) {
-      input = c.readString();
+      int inputNum = parseInt(c.readString());
       if (myState != 2) myState = 1;
-      if (input == "1") myState = 2;
+      if (inputNum == 1) myState = 2;
     }
     if (listener.leftGrab > 0.8 && listener.rightGrab > 0.8) {
-      c.write("1");
       oppoState = 2; 
     }
-    else {
-      c.write("0");
+    
+    if (oppoState == 2) {
+      c.write("1");
     }
+    else {
+      c.write("0"); 
+    }
+
     
     if (myState == 2 && oppoState == 2) stage = 1;
     

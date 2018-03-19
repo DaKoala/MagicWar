@@ -59,9 +59,9 @@ void draw() {
     leapDraw();
     c = s.available();
     if (c != null) {
-      input = c.readString();
+      int inputNum = parseInt(c.readString());
       if (oppoState != 2) oppoState = 1;
-      if (input == "1") oppoState = 2;
+      if (inputNum == 1) oppoState = 2;
     }
     if (listener.leftGrab > 0.8 && listener.rightGrab > 0.8) {
       s.write("1");
