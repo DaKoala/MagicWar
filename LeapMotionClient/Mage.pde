@@ -9,12 +9,13 @@ class Mage {
   int lstate, rstate, pr;
   int health, mana, superPower;
   int state;
+  int size;
   int orien;
   PImage stand, charge, cast, block;
 
-  Mage (float _posX, float _posY, PImage _stand, PImage _charge, PImage _cast, PImage _block) {
+  Mage (float _posX, float _posY, int _size, PImage _stand, PImage _charge, PImage _cast, PImage _block) {
     this.pos = new PVector(_posX, _posY);
-    
+    this.size = _size;
     this.health = 200;
     this.mana = 0; // most 500
     this.superPower = 0; // most 1500    
