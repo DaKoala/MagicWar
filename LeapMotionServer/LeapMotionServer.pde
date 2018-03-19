@@ -221,6 +221,6 @@ void mageJSON(JSONArray jarray, int index, Mage mage) {
 void init() {
   me = new Mage(1400, 400, 5, 100, listener, myOrbs, rstandImg, rchargeImg, rcastImg, rblockImg, rmovImg);
   oppo = new Mage(200, 400, 5, 100, opListener, oppoOrbs, lstandImg, lchargeImg, lcastImg, lblockImg, lmovImg);
-  myOrbs = new ArrayList<Orb>();
-  oppoOrbs = new ArrayList<Orb>();
+  myOrbs.clear();
+  oppoOrbs.clear();
 }

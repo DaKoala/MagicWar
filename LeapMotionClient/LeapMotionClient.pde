@@ -137,10 +137,20 @@ void draw() {
     input = c.readString();
     if (input.length() < 2) {
       int result = parseInt(input);
-      if (result == 8) win = false;
-      else             win = true;
-      stage = 2;
-      return;
+      if (result == 8) {
+        win = false;
+        stage = 2;          
+        myState = 1;
+        oppoState = 1;
+        return;
+      }
+      else if (result == 9) {
+        win = true;
+        stage = 2;          
+        myState = 1;
+        oppoState = 1;
+        return;
+      }
     }
   }
   JSONObject fromServer = parseJSON(input);
@@ -256,6 +266,6 @@ void setMage(JSONObject j, Mage m, ArrayList<Orb> orbs) {
 void init() {
   me = new Mage(1400, 400, 100, rstandImg, rchargeImg, rcastImg, rblockImg, rmovImg);
   oppo = new Mage(200, 400, 100, lstandImg, lchargeImg, lcastImg, lblockImg, lmovImg);
-  myOrbs = new ArrayList<Orb>();
-  oppoOrbs = new ArrayList<Orb>();
+  myOrbs.clear();
+  oppoOrbs.clear();
 }
