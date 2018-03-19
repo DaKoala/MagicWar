@@ -135,7 +135,7 @@ void draw() {
 
   if (c.available() > 0) {
     input = c.readString();
-    if (input.length() < 2) {
+    if (input.length() < 2 && (me.health < 100 || oppo.health < 100)) {
       int result = parseInt(input);
       if (result == 8) {
         win = false;
