@@ -100,8 +100,12 @@ void draw() {
     if (listener.leftGrab > 0.8 && listener.rightGrab > 0.8) {
       s.write("1");
       myState = 2;
-    } else {
-      s.write("0");
+    }
+    else if (win) {
+      s.write("8");
+    }
+    else {
+      s.write("9"); 
     }
 
     if (myState == 2 && oppoState == 2) {

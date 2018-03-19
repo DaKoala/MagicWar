@@ -135,6 +135,13 @@ void draw() {
 
   if (c.available() > 0) {
     input = c.readString();
+    if (input.length() < 2) {
+      int result = parseInt(input);
+      if (result == 8) win = false;
+      else             win = true;
+      stage = 2;
+      return;
+    }
   }
   JSONObject fromServer = parseJSON(input);
   if (!fromServer.equals(new JSONObject())) {
