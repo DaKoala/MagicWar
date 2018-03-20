@@ -11,7 +11,7 @@ This project is the midterm project for the course [Kinetic Interfaces](http://i
 Players should use their hands to control the characters, cast spell and make other interesting movements. The only goal is to beat your opponent.
 
 ## Installation
----
+
 ### Download
 
 ``` bash
@@ -27,7 +27,7 @@ git clone https://github.com/DaKoala/MagicWar.git
 * Leap Motion connected and Leap Motion App installed
 
 ## Instruction
----
+
 ### Setup
 One computer should be the server and the other one should be the client. For server, run `LeapMotionServer/LeapMotionServer.pde` Replace the port number with your port number on line `46` (default 8000). For client Replace the IP address and port number with server's IP address and port number on line `85`, then run `LeapMotionClient/LeapMotionClient.pde`. Both server and client will see the user interface below.
 
@@ -68,11 +68,11 @@ Player 1 is on the **right** side and player 2 is one the **left** side. Three b
 * **Grab** to defend. This will reduce 80% fireball damage, 50% lightning damage or 20% ultimate orb damage.
 
 ## Demo
----
+
 (Available soon)
 
 ## Credit
----
+
 * [Leap Motion](https://www.leapmotion.com/)
 * [Leap Motion library for Processing](https://github.com/nok/leap-motion-processing)
 * [Net library for processing](https://github.com/processing/processing/tree/master/java/libraries/net)
@@ -81,5 +81,5 @@ Player 1 is on the **right** side and player 2 is one the **left** side. Three b
 Special thanks to my instructor J.H Moon for the supporting in the course.
 
 ## License
----
+
 LGPL V3.0
