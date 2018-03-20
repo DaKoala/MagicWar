@@ -51,6 +51,8 @@ void setup() {
   textAlign(CENTER, CENTER);
   
   minim = new Minim(this);
+  winner = minim.loadFile("sound/winner.mp3");
+  loser = minim.loadFile("sound/loser.mp3");
   battle = minim.loadFile("sound/battle.mp3");
   start = minim.loadFile("sound/start.mp3");
   fireCast = minim.loadFile("sound/fire.wav");

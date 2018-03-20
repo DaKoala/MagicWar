@@ -43,6 +43,19 @@ void setup() {
   font = createFont("AvenirNext-Heavy-48", 48);
   textFont(font);
   textAlign(CENTER, CENTER);
+  
+  minim = new Minim(this);
+  winner = minim.loadFile("sound/winner.mp3");
+  loser = minim.loadFile("sound/loser.mp3");
+  battle = minim.loadFile("sound/battle.mp3");
+  start = minim.loadFile("sound/start.mp3");
+  fireCast = minim.loadFile("sound/fire.wav");
+  thunderCast = minim.loadFile("sound/thunder.wav");
+  doomCast = minim.loadFile("sound/doom.wav");
+  fireExp = minim.loadFile("sound/exp0.wav");
+  thunderExp = minim.loadFile("sound/exp1.wav");
+  doomExp = minim.loadFile("sound/exp2.wav");
+  castSpell = minim.loadFile("sound/cast.wav");
   titleImg = loadImage("sign/title.png");
   winImg = loadImage("sign/win.png");
   loseImg = loadImage("sign/lose.png");
