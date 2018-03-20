@@ -30,9 +30,17 @@ class Mage {
   }
 
   void display() {
-    if      (this.state == CAST)   image(this.cast, this.pos.x, this.pos.y);
+    if      (this.state == CAST) {
+      if (!castSpell.isPlaying()) castSpell.rewind();
+      image(this.cast, this.pos.x, this.pos.y);
+      castSpell.play();
+    }
     else if (this.state == BLOCK)  image(this.block, this.pos.x, this.pos.y);
-    else if (this.state == CHARGE) image(this.charge, this.pos.x, this.pos.y);
+    else if (this.state == CHARGE) {
+      if (!castSpell.isPlaying()) castSpell.rewind();
+      image(this.charge, this.pos.x, this.pos.y);
+      castSpell.play();
+    }
     else if (this.state == MOV)    image(this.mov, this.pos.x, this.pos.y);
     else                           image(this.stand, this.pos.x, this.pos.y);
   }

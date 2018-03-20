@@ -60,7 +60,9 @@ class Mage {
       if (this.pr != 1) this.energy = 0;
       else              this.energy++;
       if (this.energy == 20) {
-        this.shots.add(new Orb(this, this.pos.x, this.pos.y, 5 * this.orien, 0, 50, 10, 0, fireballImg));
+        this.shots.add(new Orb(this, this.pos.x, this.pos.y, 7 * this.orien, 0, 50, 10, 0, fireballImg));
+        fireCast.play();
+        fireCast.rewind();
         this.mana -= 30;
       }
       this.pr = right;
@@ -71,7 +73,9 @@ class Mage {
       if (this.pr != 2) this.energy = 0;
       else              this.energy++;
       if (this.energy == 30) {
-        this.shots.add(new Orb(this, this.pos.x, this.pos.y, 8 * this.orien, 0, 75, 20, 1, thunderImg));
+        this.shots.add(new Orb(this, this.pos.x, this.pos.y, 10 * this.orien, 0, 75, 20, 1, thunderImg));
+        thunderCast.play();
+        thunderCast.rewind();
         this.mana -= 100;
       }
       this.pr = right;
@@ -82,7 +86,9 @@ class Mage {
       if (this.pr != 3) this.energy = 0;
       else              this.energy++;
       if (this.energy == 50) {
-        this.shots.add(new Orb(this, this.pos.x, this.pos.y, 10 * this.orien, 0, 125, 50, 2, doomImg));
+        this.shots.add(new Orb(this, this.pos.x, this.pos.y, 13 * this.orien, 0, 125, 50, 2, doomImg));
+        doomCast.play();
+        doomCast.rewind();
         this.superPower = 0;
       }
       this.pr = right;
@@ -120,9 +126,17 @@ class Mage {
   }
 
   void display() {
-    if      (this.state == CAST)   image(this.cast, this.pos.x, this.pos.y);
+    if      (this.state == CAST) {
+      if (!castSpell.isPlaying()) castSpell.rewind();
+      image(this.cast, this.pos.x, this.pos.y);
+      castSpell.play();
+    }
     else if (this.state == BLOCK)  image(this.block, this.pos.x, this.pos.y);
-    else if (this.state == CHARGE) image(this.charge, this.pos.x, this.pos.y);
+    else if (this.state == CHARGE) {
+      if (!castSpell.isPlaying()) castSpell.rewind();
+      image(this.charge, this.pos.x, this.pos.y);
+      castSpell.play();
+    }
     else if (this.state == MOV)    image(this.mov, this.pos.x, this.pos.y);
     else                           image(this.stand, this.pos.x, this.pos.y);
   }

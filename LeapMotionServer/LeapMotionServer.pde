@@ -1,4 +1,5 @@
 import processing.net.*; 
+import ddf.minim.*;
 
 Client c; 
 Server s;
@@ -6,9 +7,23 @@ OpListener opListener;
 String input;
 int stage = 0;
 int myState = 1;
-int oppoState = 0;
+int oppoState = 2;
 boolean win = false;
 Mage me, oppo;
+
+Minim minim;
+AudioPlayer battle;
+AudioPlayer start;
+AudioPlayer winner;
+AudioPlayer loser;
+AudioPlayer fireCast;
+AudioPlayer thunderCast;
+AudioPlayer doomCast;
+AudioPlayer fireExp;
+AudioPlayer thunderExp;
+AudioPlayer doomExp;
+AudioPlayer castSpell;
+
 PFont font;
 PImage titleImg;
 PImage backgroundImg;
@@ -17,6 +32,7 @@ PImage[] thunderImg = new PImage[5];
 PImage[] doomImg = new PImage[5];
 PImage onlineImg, offlineImg, waitingImg, winImg, loseImg;
 PImage rstandImg, rchargeImg, rcastImg, rblockImg, rmovImg, lstandImg, lchargeImg, lcastImg, lblockImg, lmovImg;
+
 ArrayList<Orb> myOrbs = new ArrayList<Orb>();
 ArrayList<Orb> oppoOrbs = new ArrayList<Orb>();
 
@@ -29,9 +45,22 @@ void setup() {
   frameRate(45);
   s = new Server(this, 8000);
   opListener = new OpListener();
+  
   font = loadFont("AvenirNext-Heavy-48.vlw");
   textFont(font);
   textAlign(CENTER, CENTER);
+  
+  minim = new Minim(this);
+  battle = minim.loadFile("sound/battle.mp3");
+  start = minim.loadFile("sound/start.mp3");
+  fireCast = minim.loadFile("sound/fire.wav");
+  thunderCast = minim.loadFile("sound/thunder.wav");
+  doomCast = minim.loadFile("sound/doom.wav");
+  fireExp = minim.loadFile("sound/exp0.wav");
+  thunderExp = minim.loadFile("sound/exp1.wav");
+  doomExp = minim.loadFile("sound/exp2.wav");
+  castSpell = minim.loadFile("sound/cast.wav");
+  
   titleImg = loadImage("sign/title.png");
   winImg = loadImage("sign/win.png");
   loseImg = loadImage("sign/lose.png");
@@ -62,6 +91,7 @@ void setup() {
 void draw() {
   if (stage == 0) {
     /* Online detection */
+    if (!start.isPlaying()) start.play();
     background(0);
     leapDraw();
     c = s.available();
@@ -102,8 +132,14 @@ void draw() {
     /* Online detection */
     background(0);
     
-    if (win) image(winImg, 800, 200);
-    else     image(loseImg, 800, 200);
+    if (win) {
+      image(winImg, 800, 200);
+      winner.play();
+    }
+    else {
+      image(loseImg, 800, 200);
+      loser.play();
+    }
     
     leapDraw();
     c = s.available();
@@ -141,7 +177,11 @@ void draw() {
 
     return;
   }
-
+  if (start.isPlaying()) {
+    start.pause();
+    battle.loop();
+  }
+  
   JSONObject toClient = new JSONObject();
   JSONArray mages = new JSONArray();
   image(backgroundImg, 800, 450);
@@ -164,11 +204,11 @@ void draw() {
       Orb its = oppoOrbs.get(j);
       if (mine.collide(its)) {
         int cmp = mine.compare(its);
-        if      (cmp == 1)  oppoOrbs.remove(j);
-        else if (cmp == -1) myOrbs.remove(i);
+        if      (cmp == 1)  explode(oppoOrbs, j);
+        else if (cmp == -1) explode(myOrbs, i);
         else {
-          myOrbs.remove(i);
-          oppoOrbs.remove(j);
+          explode(myOrbs, i);
+          explode(oppoOrbs, j);
         }
         // TODO: Play sound
       }
@@ -180,7 +220,7 @@ void draw() {
     Orb mine = myOrbs.get(i);
     if (mine.collideMage(oppo)) {
       mine.hit(oppo);
-      myOrbs.remove(i);
+      explode(myOrbs, i);
       continue;
       // TODO: Play sound
     }
@@ -195,7 +235,7 @@ void draw() {
     Orb its = oppoOrbs.get(j);
     if (its.collideMage(me)) {
       its.hit(me);
-      oppoOrbs.remove(j);
+      explode(oppoOrbs, j);
       continue;
       // TODO: Play sound
     }
@@ -242,4 +282,15 @@ void init() {
   oppo = new Mage(200, 400, 5, 100, opListener, oppoOrbs, lstandImg, lchargeImg, lcastImg, lblockImg, lmovImg);
   myOrbs.clear();
   oppoOrbs.clear();
+}
+
+void explode(ArrayList<Orb> orbs, int index) {
+  int prior = orbs.get(index).prior;
+  AudioPlayer thisSound;
+  if      (prior == 0) thisSound = fireExp;
+  else if (prior == 1) thisSound = thunderExp;
+  else                 thisSound = doomExp;
+  thisSound.play();
+  thisSound.rewind();
+  orbs.remove(index);
 }

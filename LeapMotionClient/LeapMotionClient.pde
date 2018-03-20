@@ -1,4 +1,5 @@
 import processing.net.*; 
+import ddf.minim.*;
 
 Client c; 
 String input;
@@ -9,6 +10,20 @@ int myState = 1;
 int oppoState = 1;
 boolean win = false;
 PFont font;
+
+Minim minim;
+AudioPlayer battle;
+AudioPlayer start;
+AudioPlayer winner;
+AudioPlayer loser;
+AudioPlayer fireCast;
+AudioPlayer thunderCast;
+AudioPlayer doomCast;
+AudioPlayer fireExp;
+AudioPlayer thunderExp;
+AudioPlayer doomExp;
+AudioPlayer castSpell;
+
 PImage titleImg;
 PImage backgroundImg;
 PImage[] fireballImg = new PImage[5];
@@ -60,6 +75,7 @@ void setup() {
 void draw() {
   if (stage == 0) {
     /* Online detection */
+    if (!start.isPlaying()) start.play();
     background(0);
     leapDraw();
     if (c.available() > 0) {
@@ -103,8 +119,14 @@ void draw() {
   if (stage == 2) {
     background(0);
     
-    if (win) image(winImg, 800, 200);
-    else     image(loseImg, 800, 200);
+    if (win) {
+      image(winImg, 800, 200);
+      winner.play();
+    }
+    else {
+      image(loseImg, 800, 200);
+      loser.play();
+    }
     
     leapDraw();
     if (c.available() > 0) {
@@ -151,6 +173,10 @@ void draw() {
   
   
   image(backgroundImg, 800, 450);
+  if (start.isPlaying()) {
+    start.pause();
+    battle.loop();
+  }
   leapDraw();
   output.setInt("left", listener.getLeft());
   output.setInt("right", listener.getRight());
@@ -205,11 +231,11 @@ void draw() {
       Orb its = oppoOrbs.get(j);
       if (mine.collide(its)) {
         int cmp = mine.compare(its);
-        if      (cmp == 1)  oppoOrbs.remove(j);
-        else if (cmp == -1) myOrbs.remove(i);
+        if      (cmp == 1)  explode(oppoOrbs, j);
+        else if (cmp == -1) explode(myOrbs, i);
         else {
-          myOrbs.remove(i);
-          oppoOrbs.remove(j);
+          explode(myOrbs, i);
+          explode(oppoOrbs, j);
         }
         // TODO: Play sound
       }
@@ -220,7 +246,7 @@ void draw() {
   for (int i = myOrbs.size() - 1; i > -1; i--) {
     Orb mine = myOrbs.get(i);
     if (mine.collideMage(oppo)) {
-      myOrbs.remove(i);
+      explode(myOrbs, i);
       continue;
       // TODO: Play sound
     }
@@ -234,7 +260,7 @@ void draw() {
   for (int j = oppoOrbs.size() - 1; j > -1; j--) {
     Orb its = oppoOrbs.get(j);
     if (its.collideMage(me)) {
-      oppoOrbs.remove(j);
+      explode(oppoOrbs, j);
       continue;
       // TODO: Play sound
     }
@@ -273,16 +299,22 @@ void setMage(JSONObject j, Mage m, ArrayList<Orb> orbs) {
   if (newMana >= m.mana) {
     ;
   } else if (m.mana - newMana >= 99) {
-    orbs.add(new Orb(m.pos.x, m.pos.y, 8 * m.orien, 0, 75, 2, thunderImg));
+    orbs.add(new Orb(m.pos.x, m.pos.y, 10 * m.orien, 0, 75, 2, thunderImg));
+    thunderCast.play();
+    thunderCast.rewind();
   } else {
-    orbs.add(new Orb(m.pos.x, m.pos.y, 5 * m.orien, 0, 50, 1, fireballImg));
+    orbs.add(new Orb(m.pos.x, m.pos.y, 7 * m.orien, 0, 50, 1, fireballImg));
+    fireCast.play();
+    fireCast.rewind();
   }
   m.mana = newMana;
   int newSuperPower = j.getInt("superPower");
   if (newSuperPower >= m.superPower) {
     ;
   } else if (newSuperPower < 5) {
-    orbs.add(new Orb(m.pos.x, m.pos.y, 10 * m.orien, 0, 125, 3, doomImg));
+    orbs.add(new Orb(m.pos.x, m.pos.y, 13 * m.orien, 0, 125, 3, doomImg));
+    doomCast.play();
+    doomCast.rewind();
   }
   m.superPower = newSuperPower;
 }
@@ -292,4 +324,15 @@ void init() {
   oppo = new Mage(200, 400, 100, lstandImg, lchargeImg, lcastImg, lblockImg, lmovImg);
   myOrbs.clear();
   oppoOrbs.clear();
+}
+
+void explode(ArrayList<Orb> orbs, int index) {
+  int prior = orbs.get(index).prior;
+  AudioPlayer thisSound;
+  if      (prior == 0) thisSound = fireExp;
+  else if (prior == 1) thisSound = thunderExp;
+  else                 thisSound = doomExp;
+  thisSound.play();
+  thisSound.rewind();
+  orbs.remove(index);
 }
