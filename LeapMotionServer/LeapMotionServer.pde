@@ -136,10 +136,14 @@ void draw() {
     
     if (win) {
       image(winImg, 800, 200);
+      battle.pause();
+      battle.rewind();
       winner.play();
     }
     else {
       image(loseImg, 800, 200);
+      battle.pause();
+      battle.rewind();
       loser.play();
     }
     

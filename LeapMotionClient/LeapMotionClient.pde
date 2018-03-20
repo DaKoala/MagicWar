@@ -40,7 +40,7 @@ void setup() {
   imageMode(CENTER);
   rectMode(CORNER);
   frameRate(45); // Slow it down a little
-  font = createFont("AvenirNext-Heavy-48", 48);
+  font = createFont("AvenirNext-Heavy-48.vlw", 48);
   textFont(font);
   textAlign(CENTER, CENTER);
   
@@ -134,10 +134,14 @@ void draw() {
     
     if (win) {
       image(winImg, 800, 200);
+      battle.pause();
+      battle.rewind();
       winner.play();
     }
     else {
       image(loseImg, 800, 200);
+      battle.pause();
+      battle.rewind();
       loser.play();
     }
     
@@ -164,7 +168,6 @@ void draw() {
       stage = 1;
     }
     
-    image(titleImg, 800, 200);
     textSize(48);
     fill(255);
     text("Player 1", 210, 300);
