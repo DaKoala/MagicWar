@@ -7,7 +7,7 @@ OpListener opListener;
 String input;
 int stage = 0;
 int myState = 1;
-int oppoState = 2;
+int oppoState = 0;
 boolean win = false;
 Mage me, oppo;
 
