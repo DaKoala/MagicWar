@@ -9,6 +9,8 @@ int myState = 1;
 int oppoState = 0;
 boolean win = false;
 Mage me, oppo;
+PFont font;
+PImage titleImg;
 PImage backgroundImg;
 PImage[] fireballImg = new PImage[5];
 PImage[] thunderImg = new PImage[5];
@@ -27,6 +29,10 @@ void setup() {
   frameRate(45);
   s = new Server(this, 8000);
   opListener = new OpListener();
+  font = loadFont("AvenirNext-Heavy-48.vlw");
+  textFont(font);
+  textAlign(CENTER, CENTER);
+  titleImg = loadImage("sign/title.png");
   winImg = loadImage("sign/win.png");
   loseImg = loadImage("sign/lose.png");
   onlineImg = loadImage("sign/online.png");
@@ -72,13 +78,22 @@ void draw() {
     }
 
     if (myState == 2 && oppoState == 2) stage = 1;
-
+    
+    image(titleImg, 800, 150);
+    textSize(48);
+    fill(255);
+    text("Player 1", 210, 300);
     if (myState == 1) image(waitingImg, 200, 450);
     else              image(onlineImg, 200, 450);
-
+    
+    text("Player 2", 1390, 300);
     if      (oppoState == 0) image(offlineImg, 1400, 450);
     else if (oppoState == 1) image(waitingImg, 1400, 450);
     else                     image(onlineImg, 1400, 450);
+    
+    fill(255, abs((frameCount * 4) % 510 - 255));
+    textSize(60);
+    text("Grab both hands to get ready", 800, 800);
 
     return;
   }
@@ -119,6 +134,10 @@ void draw() {
     if      (oppoState == 0) image(offlineImg, 1400, 450);
     else if (oppoState == 1) image(waitingImg, 1400, 450);
     else                     image(onlineImg, 1400, 450);
+    
+    fill(255, abs((frameCount * 4) % 510 - 255));
+    textSize(60);
+    text("Play again? Grab your hands!", 800, 800);
 
     return;
   }
