@@ -69,7 +69,9 @@ Player 1 is on the **right** side and player 2 is one the **left** side. Three b
 
 ## Demo
 
-(Available soon)
+![demo](https://s1.ax1x.com/2018/03/21/97iAzt.gif)
+
+Above is a short part of the demo. If you want to view the whole video, please click [here](https://youtu.be/K3fQKdyuORs).
 
 ## Credit
 
