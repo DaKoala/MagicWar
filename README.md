@@ -73,6 +73,8 @@ Player 1 is on the **right** side and player 2 is one the **left** side. Three b
 
 Above is a short part of the demo. If you want to view the whole video, please click [here](https://youtu.be/K3fQKdyuORs).
 
+There is also a screen capture demo. Click [here](https://www.youtube.com/watch?v=7uFNb8NIkQk) to view it.
+
 ## Credit
 
 * [Leap Motion](https://www.leapmotion.com/)
