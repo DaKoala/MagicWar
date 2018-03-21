@@ -187,6 +187,10 @@ void draw() {
     start.pause();
     battle.loop();
   }
+  if (!battle.isLooping()) {
+    battle.rewind();
+    battle.loop(); 
+  }
   
   JSONObject toClient = new JSONObject();
   JSONArray mages = new JSONArray();

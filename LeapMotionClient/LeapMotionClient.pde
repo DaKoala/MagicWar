@@ -7,7 +7,7 @@ JSONObject output = new JSONObject();
 Mage me, oppo;
 int stage = 0;
 int myState = 1;
-int oppoState = 1;
+int oppoState = 0;
 boolean win = false;
 PFont font;
 
@@ -193,6 +193,12 @@ void draw() {
     start.pause();
     battle.loop();
   }
+  
+  if (!battle.isLooping()) {
+    battle.rewind();
+    battle.loop(); 
+  }
+ 
   leapDraw();
   output.setInt("left", listener.getLeft());
   output.setInt("right", listener.getRight());
@@ -315,11 +321,11 @@ void setMage(JSONObject j, Mage m, ArrayList<Orb> orbs) {
   if (newMana >= m.mana) {
     ;
   } else if (m.mana - newMana >= 99) {
-    orbs.add(new Orb(m.pos.x, m.pos.y, 10 * m.orien, 0, 75, 2, thunderImg));
+    orbs.add(new Orb(m.pos.x, m.pos.y, 10 * m.orien, 0, 75, 1, thunderImg));
     thunderCast.play();
     thunderCast.rewind();
   } else {
-    orbs.add(new Orb(m.pos.x, m.pos.y, 7 * m.orien, 0, 50, 1, fireballImg));
+    orbs.add(new Orb(m.pos.x, m.pos.y, 7 * m.orien, 0, 50, 0, fireballImg));
     fireCast.play();
     fireCast.rewind();
   }
@@ -328,7 +334,7 @@ void setMage(JSONObject j, Mage m, ArrayList<Orb> orbs) {
   if (newSuperPower >= m.superPower) {
     ;
   } else if (newSuperPower < 5) {
-    orbs.add(new Orb(m.pos.x, m.pos.y, 13 * m.orien, 0, 125, 3, doomImg));
+    orbs.add(new Orb(m.pos.x, m.pos.y, 13 * m.orien, 0, 125, 2, doomImg));
     doomCast.play();
     doomCast.rewind();
   }
