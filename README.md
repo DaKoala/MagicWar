@@ -4,7 +4,7 @@
 ![processing](https://img.shields.io/badge/Processing-3.3.6-lightgrey.svg)
 ![license](https://img.shields.io/badge/license-LGPL--3.0-green.svg)
 
-**An online double player Leap Motion game. Developed using Processing.**
+**A online double player Leap Motion game. Developed using Processing.**
 
 This project is the midterm project for the course [Kinetic Interfaces](http://ima.nyu.sh/kinetic-interfaces/) I take this semester and is collaborated with Echo Qu(yq534), who is responsible for the artwork part.
 
